@@ -196,6 +196,9 @@ void Chat::comChat()
 			std::cout << "---------" << std::endl << std::endl;
 			break;
 		}
+		std::thread w1(logSet, "server", "client", message);
+		w1.join();
+
 		std::cout << "Data received from client: " << message << std::endl;
 		bzero(message, MESSAGE_LENGTH);
 		std::cout << "Enter the message you want to send to the client: " << std::endl;
@@ -204,7 +207,9 @@ void Chat::comChat()
 		getline(std::cin, text);
 
 		strcpy(message, text.c_str());
-
+		std::thread w2(logSet, "server", "client", message);
+		w2.join();
+		
 		ssize_t bytes = send(connection, message, sizeof(message), 0);
 		if (bytes >= 0)
 			std::cout << "Data successfully sent to the client!" << std::endl;
@@ -283,7 +288,7 @@ void Chat::changeUser()
 
 void Chat::showUsers()
 {
-	for (size_t inf = 1; inf < users_.size(); ++inf) // íå èñïîëüçóåòñÿ foreach äëÿ ñîêðûòèÿ admin
+	for (size_t inf = 1; inf < users_.size(); ++inf) // Ð½Ðµ Ð¸ÑÐ¿Ð¾Ð»ÑŒÐ·ÑƒÐµÑ‚ÑÑ foreach Ð´Ð»Ñ ÑÐ¾ÐºÑ€Ñ‹Ñ‚Ð¸Ñ admin
 	{
 		std::cout << "User #" << inf << ": " << users_[inf].getUserName() << "\n";
 	}
@@ -360,7 +365,7 @@ void Chat::wrightCommonChatFile()
 			commonChat_file << commonChat.getFrom() << " " << commonChat.getTo() << " " << commonChat.getText() << std::endl;
 }
 
-void Chat::admin() // äîï ïîëüçîâàòåëü, ðåãèñòðèðóåìûé ïðè ñòàðòå ðàáîòû ÷àòà
+void Chat::admin() // Ð´Ð¾Ð¿ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»ÑŒ, Ñ€ÐµÐ³Ð¸ÑÑ‚Ñ€Ð¸Ñ€ÑƒÐµÐ¼Ñ‹Ð¹ Ð¿Ñ€Ð¸ ÑÑ‚Ð°Ñ€Ñ‚Ðµ Ñ€Ð°Ð±Ð¾Ñ‚Ñ‹ Ñ‡Ð°Ñ‚Ð°
 {
 	for (auto& user : users_)
 	{
@@ -422,7 +427,6 @@ void Chat::start()
 	readMessageFile();
 	readCommonChatFile();
 	admin();
-	Logger log;
 }
 
 void Chat::showLoginMenu()
@@ -501,7 +505,7 @@ void Chat::showUserMenu()
 				showUsers();
 				break;
 			case '6':
-				log.getInfo();
+				logGet();
 				break;
 			case '0':
 				mainMenuWork_ = false;
@@ -546,7 +550,7 @@ void Chat::showUserMenu()
 				showPrivateChat();
 				break;
 			case '6':
-				log.getInfo();
+				logGet();
 				break;
 			case '0':
 				mainMenuWork_ = false;
