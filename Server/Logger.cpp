@@ -2,17 +2,17 @@
 
 void Logger::setInfo(const std::string& from, const std::string& to, const std::string& text)
 {
-    shared_mutex.lock();
+    mutex.lock();
     logger_file << from << " : " << to << " : " << text << std::endl;
-    shared_mutex.unlock();
+    mutex.unlock();
 }
 
 void Logger::getInfo()
 {
-    shared_mutex.lock_shared();
+    mutex.lock();
     logger_file >> from_ >> to_;
     getline(logger_file, text_);
-    shared_mutex.unlock_shared();
+    mutex.unlock();
     std::cout << from_ << " : " << to_ << " : " << text_ << std::endl;
 }
 
