@@ -3,7 +3,6 @@
 #include <fstream>
 #include <thread>
 #include <mutex>
-#include <shared_mutex>
 
 class Logger
 {
@@ -22,6 +21,6 @@ private:
     std::string to_;
     std::string text_;
     std::fstream logger_file;
-    std::shared_mutex shared_mutex;
+    std::mutex mutex;
 };
 
